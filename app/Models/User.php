@@ -51,4 +51,6 @@ class User extends Authenticatable
     {
         return $this->hasMany(Slip::class,'generated_by', 'user_id');
     }
+
+   
 }
