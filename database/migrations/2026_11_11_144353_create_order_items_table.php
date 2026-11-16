@@ -18,8 +18,8 @@ return new class extends Migration
             $table->bigInteger('item_id')->unsigned();
             $table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
             $table->integer('quantity');
-            $table->integer('unit_price');
-            $table->integer('subtotal');
+            $table->integer('unit_price')->nullable();
+            $table->integer('subtotal')->nullable();
             $table->timestamps();
         });
     }
