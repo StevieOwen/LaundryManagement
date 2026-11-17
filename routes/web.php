@@ -38,6 +38,8 @@ Route::controller(EmployeeController::class)->group(function(){
     Route::patch('employee/{order}/update','updateOrder')->name('employee.update_order');
     Route::delete('employee/{order}/delete','deleteOrder')->name('employee.delete_order');
 
+    Route::get('employee/settings','settings')->name('employee.settings');
+
 
 });
 
@@ -59,5 +61,6 @@ Route::controller(AdminController::class)->group(function(){
     Route::post('admin/store/items','storeItems')->name('admin.store_items');
     Route::patch('admin/update/{item}/items','updateItems')->name('admin.update_item');
     Route::delete('admin/delete/{item}/items','deleteItems')->name('admin.delete_item');
+    Route::get('admin/settings','settings')->name('admin.settings');
 
 });

@@ -115,7 +115,7 @@
                 </p>
 
                 <!-- Settings -->
-                <a href="#"
+                <a href="{{route('admin.settings')}}"
                     class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-[#59645F] hover:bg-[#F4F1E8]">
                         <!-- Keep the existing settings SVG icon -->
                     Settings
