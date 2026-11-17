@@ -27,40 +27,44 @@ Route::controller(AuthController::class)->group(function() {
 
 });
 
-Route::controller(EmployeeController::class)->group(function(){
-    Route::get('employee/dashboard','dashboard')->name('employee.dashboard');
-    Route::patch('employee/update/user','editUser')->name('employee.update.user');
-    Route::delete('employee/delete/user','destroyUser')->name('employee.destroy_user');
+Route::middleware('auth')->group(function() {
+    Route::controller(EmployeeController::class)->group(function(){
+        Route::get('employee/dashboard','dashboard')->name('employee.dashboard');
+        Route::patch('employee/update/user','editUser')->name('employee.update.user');
+        Route::delete('employee/delete/user','destroyUser')->name('employee.destroy_user');
 
-    Route::get('employee/orders','showOrders')->name('employee.orders');
-    Route::get('employee/create/orders','createOrders')->name('employee.createOrders');
-    Route::post('employee/orders/store','storeOrders')->name('employee.storeOrders');
-    Route::patch('employee/{order}/update','updateOrder')->name('employee.update_order');
-    Route::delete('employee/{order}/delete','deleteOrder')->name('employee.delete_order');
+        Route::get('employee/orders','showOrders')->name('employee.orders');
+        Route::post('employee/orders/store','storeOrders')->name('employee.storeOrders');
+        Route::patch('employee/{order}/update','updateOrder')->name('employee.update_order');
+        Route::delete('employee/{order}/delete','deleteOrder')->name('employee.delete_order');
 
-    Route::get('employee/settings','settings')->name('employee.settings');
+        Route::get('employee/payments','payments')->name('employee.payments');
 
+        Route::get('employee/settings','settings')->name('employee.settings');
+        Route::post('employee/order/pay','pay')->name('employee.orders.pay');
+    });
 
 });
 
-Route::controller(AdminController::class)->group(function(){
-    Route::get('admin/','dashboard')->name('admin');
-    Route::get('admin/users','users')->name('admin.users');
-    Route::post('admin/store/user','storeUser')->name('admin.store_user');
-    Route::patch('admin/update/{user}/user','updateUser')->name('admin.update.user');
-    Route::delete('admin/delete/{user}/user','deleteUser')->name('admin.delete_user');
+Route::middleware('auth')->group(function() {
+    Route::controller(AdminController::class)->group(function(){
+        Route::get('admin/','dashboard')->name('admin');
+        Route::get('admin/users','users')->name('admin.users');
+        Route::post('admin/store/user','storeUser')->name('admin.store_user');
+        Route::patch('admin/update/{user}/user','updateUser')->name('admin.update.user');
+        Route::delete('admin/delete/{user}/user','deleteUser')->name('admin.delete_user');
 
-    Route::get('admin/categories','categories')->name('admin.categories');
-    Route::post('admin/store/category','storeCategory')->name('admin.store_categories');
-    Route::patch('admin/update/{category}/category','updateCategory')->name('admin.update_category');
-    Route::delete('admin/delete/{category}','deleteCategory')->name('admin.delete_category');
+        Route::get('admin/categories','categories')->name('admin.categories');
+        Route::post('admin/store/category','storeCategory')->name('admin.store_categories');
+        Route::patch('admin/update/{category}/category','updateCategory')->name('admin.update_category');
+        Route::delete('admin/delete/{category}','deleteCategory')->name('admin.delete_category');
 
-    Route::get('admin/orders','showOrders')->name('admin.orders');
+        Route::get('admin/orders','showOrders')->name('admin.orders');
 
-    Route::get('admin/items','items')->name('admin.items');
-    Route::post('admin/store/items','storeItems')->name('admin.store_items');
-    Route::patch('admin/update/{item}/items','updateItems')->name('admin.update_item');
-    Route::delete('admin/delete/{item}/items','deleteItems')->name('admin.delete_item');
-    Route::get('admin/settings','settings')->name('admin.settings');
-
+        Route::get('admin/items','items')->name('admin.items');
+        Route::post('admin/store/items','storeItems')->name('admin.store_items');
+        Route::patch('admin/update/{item}/items','updateItems')->name('admin.update_item');
+        Route::delete('admin/delete/{item}/items','deleteItems')->name('admin.delete_item');
+        Route::get('admin/settings','settings')->name('admin.settings');
+    });
 });

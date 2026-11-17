@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use App\Actions\Fortify\PasswordValidationRules;
+use Illuminate\Validation\Rules\Password;
 use App\Services\UserService;
 use App\Services\CategoryService;
 use App\Services\ItemService;
@@ -14,7 +14,7 @@ use App\Models\User;
 use App\Models\Category;
 use App\Models\Item;
 use App\Models\Order;
-
+use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
 {
@@ -47,8 +47,8 @@ class AdminController extends Controller
             ],
             'status'=>'required|in:active,inactive',
             'role'=>'required|in:admin,employee',
-            'password' => $this->passwordRules(),
-            'password_confirmation' => ['required', 'same:password'],
+            'password' => ['required', 'string', Password::defaults()],
+            
         ]);
 
         $user_id=\Illuminate\Support\Str::uuid();
@@ -58,12 +58,12 @@ class AdminController extends Controller
         try{
             $userService->createUser(
                 [
-                    $user_id,
-                    $request->name,
-                    $request->email,
-                    $request->status,
-                    $request->role,
-                    $request->password,
+                    'user_id'=>$user_id,
+                    'name'=>$request->name,
+                    'email'=>$request->email,
+                    'status'=>$request->status,
+                    'role'=>$request->role,
+                    'password'=>$request->password,
 
                 ]
             );

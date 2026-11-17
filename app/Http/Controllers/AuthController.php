@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\Actions\Fortify\PasswordValidationRules;
 use App\Services\UserService;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -29,18 +30,17 @@ class AuthController extends Controller
         $user = Auth::user();
 
         // Redirect based on the user's role
-        match ($user->role) {
-            'admin' => redirect()->intended('admin/dashboard'),
+        return match ($user->role) {
+            'admin' => redirect()->intended('admin/'),
             'employee' => redirect()->intended('employee/dashboard'),
             default => redirect()->intended('employee/dashboard'),
         };
 
+        }
         // 3. If authentication fails, redirect back with an error message
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
         ])->onlyInput('email');
-
-        }
 
     }
 

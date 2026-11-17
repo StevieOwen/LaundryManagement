@@ -11,18 +11,19 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasUuids;
     protected $primaryKey = 'user_id';
     protected $keyType = 'string';
     public $incrementing = false;
 
-    protected $fillable = ['user_id','name', 'email', 'role', 'status', 'password','created_at','updated_at'];
+    protected $fillable = ['name', 'email', 'role', 'status', 'password','created_at','updated_at'];
 
     /**
      * Get the attributes that should be cast.

@@ -9,24 +9,41 @@ use App\Models\User;
 use App\Models\Category;
 use App\Models\Item;
 use App\Models\OrderItem;
+use App\Models\Order;
 use App\Http\Controllers\AdminController;
 
 class EmployeeController extends Controller
 {
     public function dashboard(){
+        $user_id=auth()->user()->user_id;
+        $orders_received_today=Order::with('items')->where('created_by',$user_id)
+                                ->whereDate('created_at',today())->count();
+        $order_ready=Order::with('items')->where('created_by',$user_id)
+                            ->where('processing_status','ready_for_pickup')->latest()
+                            ->paginate(5, ['*'], 'ready_page');
 
+        $processing_order=Order::with('items')->where('created_by',$user_id)
+                                ->where('processing_status','washed')->latest()
+                                ->paginate(5, ['*'], 'processing_page');
+
+        $orders=Order::with('items')->where('created_by',$user_id)->latest()
+                                    ->paginate(10, ['*'], 'orders_page');
+
+        $unpaid_orders=Order::with('items')->where('created_by',$user_id)
+                            ->where('payment_status','unpaid')->latest()
+                            ->paginate(5, ['*'], 'unpaid_page');
+        
+        return view('employee.dashboard',compact(['orders_received_today','order_ready','processing_order','orders','unpaid_orders']));
     }
 
     public function showOrders(){
+        $items=Item::with('category')->get();
+        $orders=Order::with('items')->latest()->paginate(10);
 
+        return view('employee.orders',compact(['items','orders']));
     }
 
-    public function createOrders(){
-        $items=Item::with('categories')->get();
-        
-
-    }
-
+   
     public function storeOrders(Request $request){
         $validated = $request->validate([
             'pickup_date' => ['required', 'date'],
@@ -175,8 +192,16 @@ class EmployeeController extends Controller
         }
     }
 
+    public function payments(){
+
+        return view('employee.payments');
+    }
+
     public function settings(){
         return view('employee.settings');
+    }
+    public function pay(){
+        
     }
 
 }
