@@ -1,16 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Controllers\AuthController;
-use App\Controller\EmployeeController;
-use App\Controller\AdminController;;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\AdminController;;
 
 Route::get('/', function () {
     if (auth()->check()) {
         $user = auth()->user();
 
         return match ($user->role) {
-            'admin'                           => redirect()->route('admin.dashboard'),
+            'admin'                           => redirect()->route('admin'),
             'employee'                         => redirect()->route('employee.dashboard'),
             default                           => redirect()->route('employee.dashboard'),
         };
@@ -22,6 +22,7 @@ Route::get('/', function () {
 Route::controller(AuthController::class)->group(function() {
     Route::get('user/login','login')->name('login');
     Route::post('user/login','handleLogin')->name('user.handleLogin');
+    Route::post('user/logout','logout')->name('logout');
     
 
 });
@@ -41,7 +42,7 @@ Route::controller(EmployeeController::class)->group(function(){
 });
 
 Route::controller(AdminController::class)->group(function(){
-    Route::get('admin/dashboard','dashboard')->name('admin.dashboard');
+    Route::get('admin/','dashboard')->name('admin');
     Route::get('admin/users','users')->name('admin.users');
     Route::post('admin/store/user','storeUser')->name('admin.store_user');
     Route::patch('admin/update/{user}/user','updateUser')->name('admin.update.user');
@@ -52,9 +53,11 @@ Route::controller(AdminController::class)->group(function(){
     Route::patch('admin/update/{category}/category','updateCategory')->name('admin.update_category');
     Route::delete('admin/delete/{category}','deleteCategory')->name('admin.delete_category');
 
+    Route::get('admin/orders','showOrders')->name('admin.orders');
+
     Route::get('admin/items','items')->name('admin.items');
     Route::post('admin/store/items','storeItems')->name('admin.store_items');
-    Route::patch('admin/update/{item}/items','updateItems')->name('admin.update_items');
-    Route::delete('admin/delete/{item}/items','deleteItems')->name('delete.items');
+    Route::patch('admin/update/{item}/items','updateItems')->name('admin.update_item');
+    Route::delete('admin/delete/{item}/items','deleteItems')->name('admin.delete_item');
 
 });

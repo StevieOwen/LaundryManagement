@@ -13,12 +13,26 @@ use App\Services\ItemService;
 use App\Models\User;
 use App\Models\Category;
 use App\Models\Item;
+use App\Models\Order;
+
 
 class AdminController extends Controller
 {
+    public function dashboard(){
+        $total_orders=Order::count();
+        $order_ready=Order::where('processing_status','Ready_for_pickup')->count();
+        $unpaid_orders=Order::where('payment_status','unpaid')->count();
+        $paid_orders=Order::where('payment_status','paid')->count();
+        $orders=Order::with('items')->latest()->take(8)->get();
+        $revenue=Order::where('payment_status','paid')->sum('total_price');
+        $outstanding_payment=Order::where('payment_status','unpaid')->sum('total_price');
+
+        return view('admin.dashboard',compact(['total_orders','order_ready','unpaid_orders','paid_orders','orders','revenue','outstanding_payment']));
+    }
     // User
     public function users(){
-        return view('admin.users');
+        $users=User::latest()->paginate(10);
+        return view('admin.users',compact('users'));
     }
 
     public function storeUser(Request $request){
@@ -86,6 +100,12 @@ class AdminController extends Controller
             ]
         );
 
+        if (filled($validated['password'] ?? null)) {
+        $reuqest->password = Hash::make($validated['password']);
+        } else {
+            unset($request->password);
+        }
+
         $userService=new UserService();
 
         try{
@@ -140,8 +160,8 @@ class AdminController extends Controller
     // Category
 
     public function categories(){
-        $categories=Category::get();
-        return view('admin.categories',compact('category'));
+        $categories = Category::latest()->paginate(10);
+        return view('admin.categories',compact('categories'));
     }
 
     public function storeCategories(Request $request){
@@ -227,9 +247,10 @@ class AdminController extends Controller
     //items
 
     public function items(){
-        $items=Item::get();
+        $items=Item::with('category')->latest()->paginate(10);
+        $categories=Category::orderby('name')->get();
 
-        return view('admin.items',compact('items'));
+        return view('admin.items',compact(['items','categories']));
     }
 
     public function storeItems(Request $request){
